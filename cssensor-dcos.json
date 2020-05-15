@@ -1,0 +1,54 @@
+{
+  "id": "/qualys-container-sensor",
+  "args": ["--dcos-mode"],
+  "cpus": 1,
+  "mem": 128,
+  "disk": 0,
+  "instances": 1,
+  "acceptedResourceRoles": [
+    "*"
+  ],
+  "container": {
+    "type": "DOCKER",
+    "docker": {
+      "forcePullImage": true,
+      "image": "qualys/cs/sensor:latest",
+      "parameters": [],
+      "privileged": false
+    },
+    "volumes": [
+      {
+        "containerPath": "/usr/local/qualys/qpa/data",
+        "hostPath": "/usr/local/qualys/sensor/data",
+        "mode": "RW"
+      },
+      {
+        "containerPath": "/var/run",
+        "hostPath": "/var/run",
+        "mode": "RW"
+      },
+      {
+        "containerPath": "/usr/local/qualys/qpa/data/conf/agent-data",
+        "hostPath": "/etc/qualys",
+        "mode": "RW"
+      },
+      {
+        "containerPath": "/etc/qualys/qpa/cert/custom-ca.crt",
+        "hostPath": "/root/cert/proxy-certificate.crt",
+        "mode": "RO"
+      }
+    ]
+  },
+  "env": {
+    "ACTIVATIONID": "XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX",
+    "CUSTOMERID": "XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX",
+    "POD_URL": "",
+    "qualys_https_proxy": "proxy.qualys.com:3128"
+  },
+  "portDefinitions": [
+    {
+      "port": 10000,
+      "protocol": "tcp"
+    }
+  ]
+}

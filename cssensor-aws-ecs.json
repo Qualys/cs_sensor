@@ -1,0 +1,78 @@
+{
+    "family": "qualys-container-sensor",
+        "containerDefinitions": [
+        {
+            "name": "qualys-container-sensor",
+            "image": "qualys/cs/sensor:latest",
+            "cpu": 10,
+            "memory": 512,
+            "essential": true,
+            "command": [
+                "--ecs-mode"
+                ],
+            "environment": [
+            {
+                "name": "ACTIVATIONID",
+                "value": "XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX"
+            },
+            {
+                "name": "CUSTOMERID",
+                "value": "XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX"
+            },
+            {
+                "name": "POD_URL",
+                "value": ""
+            },
+            {
+                "name": "qualys_https_proxy",
+                "value": "proxy.qualys.com:3128"
+            }
+            ],
+            "mountPoints": [
+                {
+                    "sourceVolume": "persistent_volume",
+                    "containerPath": "/usr/local/qualys/qpa/data"                  
+                },
+                {
+                    "sourceVolume": "var_run",
+                    "containerPath": "/var/run"
+                },
+                {
+                    "sourceVolume": "etc_qualys",
+                    "containerPath": "/usr/local/qualys/qpa/data/conf/agent-data"
+                },
+                {
+                    "sourceVolume": "proxy-cert-path",
+                    "containerPath": "/etc/qualys/qpa/cert/custom-ca.crt"
+                }
+            ]
+        }
+    ],
+        "volumes": [
+        {
+            "name": "persistent_volume",
+            "host": {
+                "sourcePath": "/usr/local/qualys/sensor/data"
+            }
+        },
+        {
+            "name": "var_run",
+            "host": {
+                "sourcePath": "/var/run"
+            }
+        },
+        {
+            "name": "etc_qualys",
+            "host": {
+                "sourcePath": "/etc/qualys"
+            }
+        },
+        {
+            "name": "proxy-cert-path",
+            "host": {
+                "sourcePath": "/root/cert/proxy-certificate.crt"
+            }
+        }
+
+    ]
+}

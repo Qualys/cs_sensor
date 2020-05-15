@@ -1,0 +1,45 @@
+version: '3.3'
+
+services:
+  qualys-container-sensor:
+    image: qualys/cs/sensor:latest
+    deploy:
+      mode: global  # Deploy 1 container on each node == DaemonSet
+      resources:
+        limits:
+          cpus: '0.20' # Default CPU usage limit on each node for sensor.
+    command: ["--swrm-mode"]
+    environment:
+      ACTIVATIONID: XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
+      CUSTOMERID: XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
+      POD_URL: 
+      qualys_https_proxy: proxy.qualys.com:3128
+    volumes:
+      - type: bind
+        source: /var/run/
+        target: /var/run/
+      - type: volume
+        source: persistent-volume
+        target: /usr/local/qualys/qpa/data/
+      - type: bind
+        source: /etc/qualys  # Must exist !
+        target: /usr/local/qualys/qpa/data/conf/agent-data
+    configs:
+      - source: proxy-cert-path
+        target: /etc/qualys/qpa/cert/custom-ca.crt
+    networks:
+      - sensor
+
+volumes:
+  persistent-volume:
+
+configs:
+  proxy-cert-path:
+    file: /root/cert/proxy-certificate.crt # Only if proxy cert required.
+
+networks:
+  sensor:
+    external:
+      name: host  # Option available on docker >= 17.06
+
+

@@ -1,0 +1,84 @@
+kind: ServiceAccount
+apiVersion: v1
+metadata:
+  name: qualys-user
+  namespace: "kube-system"
+---
+kind: SecurityContextConstraints
+apiVersion: v1
+metadata:
+  name: scc-qualys-sensor
+allowPrivilegedContainer: true
+allowHostDirVolumePlugin: true
+allowHostNetwork: true
+allowPrivilegeEscalation: false
+allowHostPID: true
+runAsUser:
+  type: RunAsAny
+seLinuxContext:
+  type: RunAsAny
+users:
+- qualys-user
+---
+kind: DaemonSet
+apiVersion: apps/v1
+metadata:
+  name: qualys-container-sensor
+  namespace: kube-system
+  labels:
+    k8s-app: qualys-cs-sensor
+spec:
+  selector:
+    matchLabels:
+      name: qualys-container-sensor
+  updateStrategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        name: qualys-container-sensor
+    spec:
+      serviceAccountName:
+        qualys-user 
+      containers:
+      - name: qualys-container-sensor
+        image: qualys/cs/sensor:latest
+        securityContext:
+          privileged: true
+        resources:
+          limits:
+            cpu: "0.2" # Default CPU usage limit on each node for sensor.
+        args: ["--k8s-mode"]
+        env:
+        - name: ACTIVATIONID
+          value: XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
+        - name: CUSTOMERID
+          value: XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
+        - name: POD_URL
+          value: 
+        - name: qualys_https_proxy
+          value: proxy.qualys.com:3128
+        volumeMounts:
+        - mountPath: /var/run
+          name: socket-volume
+        - mountPath: /usr/local/qualys/qpa/data
+          name: persistent-volume
+        - mountPath: /usr/local/qualys/qpa/data/conf/agent-data
+          name: agent-volume
+        - mountPath: /etc/qualys/qpa/cert/custom-ca.crt
+          name: proxy-cert-path
+      volumes:
+      - name: socket-volume
+        hostPath:
+          path: /var/run/
+      - name: persistent-volume
+        hostPath:
+          path: /usr/local/qualys/sensor/data/
+      - name: agent-volume
+        hostPath:
+          path: /etc/qualys/
+      - name: proxy-cert-path
+        hostPath:
+          path: /root/cert/proxy-certificate.crt
+      hostNetwork: true
+      hostPID: true
