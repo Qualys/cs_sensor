@@ -1,0 +1,102 @@
+kind: List
+apiVersion: v1
+items:
+  # Service Account
+  - kind: ServiceAccount
+    apiVersion: v1
+    metadata:
+      name: qualys-service-account
+      namespace: kube-system
+  # ClusterRole for read permission to whole cluster
+  - kind: ClusterRole
+    apiVersion: rbac.authorization.k8s.io/v1beta1
+    metadata:
+      name: qualys-cluster-reader-role
+    rules:
+    - apiGroups: ["*"]
+      resources: ["*"]
+      verbs: ["get", "list", "watch", "create", "delete", "deletecollection"] 
+  # RoleBinding to assign permissions in qualys-cluster-reader-role to qualys-service-account 
+  - kind: ClusterRoleBinding
+    apiVersion: rbac.authorization.k8s.io/v1beta1
+    metadata:
+      name: qualys-cluster-reader-rb
+    subjects:
+    - kind: ServiceAccount
+      name: qualys-service-account
+      namespace: kube-system
+    roleRef:
+      kind: ClusterRole
+      name: qualys-cluster-reader-role 
+      apiGroup: rbac.authorization.k8s.io
+  # Qualys Container Sensor pod with 
+  - apiVersion: apps/v1
+    kind: DaemonSet
+    metadata:
+      name: qualys-container-sensor
+      namespace: kube-system
+      labels:
+        k8s-app: qualys-cs-sensor
+    spec:
+      selector:
+        matchLabels:
+          name: qualys-container-sensor
+      updateStrategy:
+          type: RollingUpdate
+      template:
+        metadata:
+          labels:
+            name: qualys-container-sensor
+        spec:
+          serviceAccountName: qualys-service-account 
+          containers:
+          - name: qualys-container-sensor
+            image: qualys/cs/sensor:latest
+            imagePullPolicy : IfNotPresent
+            resources:
+              limits:
+                cpu: "0.2" # Default CPU usage limit on each node for sensor.
+            args: ["--k8s-mode", "--container-runtime", "containerd"]
+            env:
+            - name: CUSTOMERID
+              value: XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX 
+            - name: ACTIVATIONID
+              value: XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
+            - name: POD_URL
+              value: 
+            - name: QUALYS_SCANNING_CONTAINER_LAUNCH_TIMEOUT
+              value: "10"
+# uncomment(and indent properly) below section if proxy is required to connect Qualys Cloud
+            #- name: qualys_https_proxy
+            #  value: <proxy FQDN or Ip address>:<port#>
+            volumeMounts:
+            - mountPath: /var/run
+              name: socket-volume
+            - mountPath: /usr/local/qualys/qpa/data
+              name: persistent-volume
+            - mountPath: /usr/local/qualys/qpa/data/conf/agent-data
+              name: agent-volume
+# uncomment(and indent properly) below section if proxy(with CA cert) required to connect Qualys Cloud
+            #- mountPath: /etc/qualys/qpa/cert/custom-ca.crt
+            #  name: proxy-cert-path              
+            securityContext:
+              allowPrivilegeEscalation: false
+          volumes:
+            - name: socket-volume
+              hostPath:
+                path: /var/run
+                type: Directory
+            - name: persistent-volume
+              hostPath:
+                path: /usr/local/qualys/sensor/data
+                type: DirectoryOrCreate
+            - name: agent-volume
+              hostPath:
+                path: /etc/qualys
+                type: DirectoryOrCreate
+# uncomment(and indent properly) below section if proxy(with CA cert) required to connect Qualys Cloud
+            #- name: proxy-cert-path
+            #  hostPath:
+            #    path: <proxy certificate path>
+            #    type: File                
+          hostNetwork: true

@@ -58,8 +58,9 @@ spec:
           value: XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
         - name: POD_URL
           value: 
-        - name: qualys_https_proxy
-          value: proxy.qualys.com:3128
+# uncomment(and indent properly) below section if proxy is required to connect Qualys Cloud
+        #- name: qualys_https_proxy
+        #  value: <proxy FQDN or Ip address>:<port#>
         volumeMounts:
         - mountPath: /var/run
           name: socket-volume
@@ -67,8 +68,9 @@ spec:
           name: persistent-volume
         - mountPath: /usr/local/qualys/qpa/data/conf/agent-data
           name: agent-volume
-        - mountPath: /etc/qualys/qpa/cert/custom-ca.crt
-          name: proxy-cert-path
+# uncomment(and indent properly) below section if proxy(with CA cert) required to connect Qualys Cloud
+        #- mountPath: /etc/qualys/qpa/cert/custom-ca.crt
+        #  name: proxy-cert-path
         securityContext:
           allowPrivilegeEscalation: false
       volumes:
@@ -83,8 +85,9 @@ spec:
         hostPath:
           path: /etc/qualys
           type: DirectoryOrCreate
-      - name: proxy-cert-path
-        hostPath:
-          path: /root/cert/proxy-certificate.crt 
-          type: File
+# uncomment(and indent properly) below section if proxy(with CA cert) required to connect Qualys Cloud
+      #- name: proxy-cert-path
+      #  hostPath:
+      #    path: <proxy certificate path>
+      #    type: File
       hostNetwork: true

@@ -13,7 +13,8 @@ services:
       ACTIVATIONID: XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
       CUSTOMERID: XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
       POD_URL: 
-      qualys_https_proxy: proxy.qualys.com:3128
+# uncomment(and indent properly) below section if proxy is required to connect Qualys Cloud
+      #qualys_https_proxy: <proxy FQDN or Ip address>:<port#>
     volumes:
       - type: bind
         source: /var/run/
@@ -24,18 +25,20 @@ services:
       - type: bind
         source: /etc/qualys  # Must exist !
         target: /usr/local/qualys/qpa/data/conf/agent-data
-    configs:
-      - source: proxy-cert-path
-        target: /etc/qualys/qpa/cert/custom-ca.crt
+# uncomment(and indent properly) below section if proxy(with CA cert) required to connect Qualys Cloud
+    #configs:
+    #  - source: proxy-cert-path
+    #    target: /etc/qualys/qpa/cert/custom-ca.crt
     networks:
       - sensor
 
 volumes:
   persistent-volume:
 
-configs:
-  proxy-cert-path:
-    file: /root/cert/proxy-certificate.crt # Only if proxy cert required.
+# uncomment(and indent properly) below section if proxy(with CA cert) required to connect Qualys Cloud
+#configs:
+#  proxy-cert-path:
+#    file: <proxy certificate path>
 
 networks:
   sensor:
