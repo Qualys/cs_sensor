@@ -13,7 +13,7 @@
     "type": "DOCKER",
     "docker": {
       "forcePullImage": true,
-      "image": "qualys/cs/sensor:latest",
+      "image": "qualys/qcs-sensor:latest",
       "parameters": [],
       "privileged": false
     },

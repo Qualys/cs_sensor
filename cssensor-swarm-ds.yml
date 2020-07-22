@@ -2,7 +2,7 @@ version: '3.3'
 
 services:
   qualys-container-sensor:
-    image: qualys/cs/sensor:latest
+    image: qualys/qcs-sensor:latest
     deploy:
       mode: global  # Deploy 1 container on each node == DaemonSet
       resources:

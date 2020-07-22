@@ -3,7 +3,7 @@
         "containerDefinitions": [
         {
             "name": "qualys-container-sensor",
-            "image": "qualys/cs/sensor:latest",
+            "image": "qualys/qcs-sensor:latest",
             "cpu": 10,
             "memory": 512,
             "essential": true,

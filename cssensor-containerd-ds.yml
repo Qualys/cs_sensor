@@ -51,7 +51,7 @@ items:
           serviceAccountName: qualys-service-account 
           containers:
           - name: qualys-container-sensor
-            image: qualys/cs/sensor:latest
+            image: qualys/qcs-sensor:latest
             imagePullPolicy : IfNotPresent
             resources:
               limits:

@@ -42,7 +42,7 @@ spec:
         qualys-user 
       containers:
       - name: qualys-container-sensor
-        image: qualys/cs/sensor:latest
+        image: qualys/qcs-sensor:latest
         securityContext:
           privileged: true
         resources:

@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
       - name: qualys-container-sensor
-        image: qualys/cs/sensor:latest
+        image: qualys/qcs-sensor:latest
         resources:
           limits:
             cpu: "0.2" # Default CPU usage limit on each node for sensor.
