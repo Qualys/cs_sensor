@@ -1,17 +1,18 @@
 kind: List
 apiVersion: v1
 items:
+  # Create custom namespace qualys
   - kind: Namespace
     apiVersion: v1
     metadata:
-      name: qualys    
+      name: qualys
   # Service Account
   - kind: ServiceAccount
     apiVersion: v1
     metadata:
       name: qualys-service-account
       namespace: qualys
-  # Role for read/write/delete permission to qualys namespace
+  # Role for all permission to qualys namespace
   - kind: Role
     apiVersion: rbac.authorization.k8s.io/v1beta1
     metadata:
@@ -20,15 +21,33 @@ items:
     rules:
     - apiGroups: [""]
       resources: ["pods"]
-      verbs: ["get", "list", "watch","create", "delete", "deletecollection"]
+      verbs: ["create", "delete", "deletecollection"]
     - apiGroups: [""]
-      resources: ["pods/attach", "pods/exec"]
-      verbs: ["create"]    
+      resources: ["pods/attach"]
+      verbs: ["create"]
+  # ClusterRole for read permission to whole cluster
+  - kind: ClusterRole
+    apiVersion: rbac.authorization.k8s.io/v1beta1
+    metadata:
+      name: qualys-cluster-reader-role
+    rules:
+    - apiGroups: [""]
+      resources: ["nodes"]
+      verbs: ["get"]
+    - apiGroups: [""]
+      resources: ["pods"]
+      verbs: ["get","list","watch"]
+    - apiGroups: [""]
+      resources: ["pods/status"]
+      verbs: ["get"]
+    - apiGroups: [""]
+      resources: ["pods/exec"]
+      verbs: ["create"]
   # RoleBinding to assign permissions in qualys-reader-role to qualys-service-account 
   - kind: RoleBinding
     apiVersion: rbac.authorization.k8s.io/v1beta1
     metadata:
-      name: qualys-reader-role-rb
+      name: qualys-reader-rb
       namespace: qualys
     subjects:
     - kind: ServiceAccount
@@ -37,7 +56,37 @@ items:
     roleRef:
       kind: Role
       name: qualys-reader-role 
+      apiGroup: rbac.authorization.k8s.io      
+  # RoleBinding to assign permissions in qualys-cluster-reader-role to qualys-service-account 
+  - kind: ClusterRoleBinding
+    apiVersion: rbac.authorization.k8s.io/v1beta1
+    metadata:
+      name: qualys-cluster-reader-rb
+    subjects:
+    - kind: ServiceAccount
+      name: qualys-service-account
+      namespace: qualys
+    roleRef:
+      kind: ClusterRole
+      name: qualys-cluster-reader-role 
       apiGroup: rbac.authorization.k8s.io
+  - kind: SecurityContextConstraints
+    apiVersion: security.openshift.io/v1 
+    metadata:
+      name: scc-qualys-sensor
+    allowHostDirVolumePlugin: true
+    allowHostNetwork: true
+    allowHostIPC: false
+    allowHostPID: false
+    allowHostPorts: false
+    allowPrivilegedContainer: false
+    readOnlyRootFilesystem: false
+    runAsUser:
+      type: RunAsAny
+    seLinuxContext:
+      type: RunAsAny
+    users:
+    - system:serviceaccount:qualys:qualys-service-account      
   # Qualys Container Sensor pod with 
   - apiVersion: apps/v1
     kind: DaemonSet
@@ -70,10 +119,10 @@ items:
             resources:
               limits:
                 cpu: "0.2" # Default CPU usage limit on each node for sensor.
-            args: ["--k8s-mode"]
+            args: ["--k8s-mode", "--container-runtime", "cri-o"]
             env:
             - name: CUSTOMERID
-              value: XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX 
+              value: XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
             - name: ACTIVATIONID
               value: XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
             - name: POD_URL

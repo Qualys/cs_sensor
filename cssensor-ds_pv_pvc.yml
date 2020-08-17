@@ -44,6 +44,11 @@ spec:
       labels:
         name: qualys-container-sensor
     spec:
+      #tolerations:
+      # this toleration is to have the daemonset runnable on master nodes
+      # remove it if want your masters to run sensor pod
+      #- key: node-role.kubernetes.io/master
+      #  effect: NoSchedule
       containers:
       - name: qualys-container-sensor
         image: qualys/qcs-sensor:latest

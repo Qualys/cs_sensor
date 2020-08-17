@@ -1,21 +1,59 @@
 kind: List
 apiVersion: v1
 items:
+  # Create custom namespace qualys
+  - kind: Namespace
+    apiVersion: v1
+    metadata:
+      name: qualys
   # Service Account
   - kind: ServiceAccount
     apiVersion: v1
     metadata:
       name: qualys-service-account
-      namespace: kube-system
+      namespace: qualys
+  # Role for all permission to qualys namespace
+  - kind: Role
+    apiVersion: rbac.authorization.k8s.io/v1beta1
+    metadata:
+      name: qualys-reader-role
+      namespace: qualys
+    rules:
+    - apiGroups: [""]
+      resources: ["pods"]
+      verbs: ["get", "list", "watch","create", "delete", "deletecollection"]
+    - apiGroups: [""]
+      resources: ["pods/attach", "pods/exec"]
+      verbs: ["create"]  
   # ClusterRole for read permission to whole cluster
   - kind: ClusterRole
     apiVersion: rbac.authorization.k8s.io/v1beta1
     metadata:
       name: qualys-cluster-reader-role
     rules:
-    - apiGroups: ["*"]
-      resources: ["*"]
-      verbs: ["get", "list", "watch", "create", "delete", "deletecollection"] 
+    - apiGroups: [""]
+      resources: ["nodes"]
+      verbs: ["get"]
+    - apiGroups: [""]
+      resources: ["pods","pods/status"]
+      verbs: ["get"]
+    - apiGroups: [""]
+      resources: ["pods/exec"]
+      verbs: ["create"]
+  # RoleBinding to assign permissions in qualys-reader-role to qualys-service-account 
+  - kind: RoleBinding
+    apiVersion: rbac.authorization.k8s.io/v1beta1
+    metadata:
+      name: qualys-reader-rb
+      namespace: qualys
+    subjects:
+    - kind: ServiceAccount
+      name: qualys-service-account
+      namespace: qualys
+    roleRef:
+      kind: Role
+      name: qualys-reader-role 
+      apiGroup: rbac.authorization.k8s.io      
   # RoleBinding to assign permissions in qualys-cluster-reader-role to qualys-service-account 
   - kind: ClusterRoleBinding
     apiVersion: rbac.authorization.k8s.io/v1beta1
@@ -24,7 +62,7 @@ items:
     subjects:
     - kind: ServiceAccount
       name: qualys-service-account
-      namespace: kube-system
+      namespace: qualys
     roleRef:
       kind: ClusterRole
       name: qualys-cluster-reader-role 
@@ -34,7 +72,7 @@ items:
     kind: DaemonSet
     metadata:
       name: qualys-container-sensor
-      namespace: kube-system
+      namespace: qualys
       labels:
         k8s-app: qualys-cs-sensor
     spec:
@@ -48,6 +86,11 @@ items:
           labels:
             name: qualys-container-sensor
         spec:
+          #tolerations:
+          # this toleration is to have the daemonset runnable on master nodes
+          # remove it if want your masters to run sensor pod
+          #- key: node-role.kubernetes.io/master
+          #  effect: NoSchedule
           serviceAccountName: qualys-service-account 
           containers:
           - name: qualys-container-sensor
