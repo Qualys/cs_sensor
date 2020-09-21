@@ -54,7 +54,7 @@ items:
       kind: Role
       name: qualys-reader-role 
       apiGroup: rbac.authorization.k8s.io      
-  # RoleBinding to assign permissions in qualys-cluster-reader-role to qualys-service-account 
+  # ClusterRoleBinding to assign permissions in qualys-cluster-reader-role to qualys-service-account 
   - kind: ClusterRoleBinding
     apiVersion: rbac.authorization.k8s.io/v1beta1
     metadata:

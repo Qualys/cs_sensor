@@ -22,8 +22,19 @@ items:
       resources: ["pods"]
       verbs: ["get", "list", "watch","create", "delete", "deletecollection"]
     - apiGroups: [""]
+      resources: ["pods/status"]
+      verbs: ["get"]
+    - apiGroups: [""]
       resources: ["pods/attach", "pods/exec"]
       verbs: ["create"]    
+  - kind: ClusterRole
+    apiVersion: rbac.authorization.k8s.io/v1beta1
+    metadata:
+      name: qualys-cluster-reader-role
+    rules:
+    - apiGroups: [""]
+      resources: ["nodes"]
+      verbs: ["get"]
   # RoleBinding to assign permissions in qualys-reader-role to qualys-service-account 
   - kind: RoleBinding
     apiVersion: rbac.authorization.k8s.io/v1beta1
@@ -37,6 +48,18 @@ items:
     roleRef:
       kind: Role
       name: qualys-reader-role 
+      apiGroup: rbac.authorization.k8s.io
+  - kind: ClusterRoleBinding
+    apiVersion: rbac.authorization.k8s.io/v1beta1
+    metadata:
+      name: qualys-cluster-reader-rb
+    subjects:
+    - kind: ServiceAccount
+      name: qualys-service-account
+      namespace: qualys
+    roleRef:
+      kind: ClusterRole
+      name: qualys-cluster-reader-role 
       apiGroup: rbac.authorization.k8s.io
   # Qualys Container Sensor pod with 
   - apiVersion: apps/v1
@@ -80,6 +103,9 @@ items:
               value: 
             - name: QUALYS_SCANNING_CONTAINER_LAUNCH_TIMEOUT
               value: "10"
+# uncomment(and indent properly) below section if using Docker HTTP socket with TLS
+            #- name: DOCKER_TLS_VERIFY
+            #  value: "1"             
 # uncomment(and indent properly) below section if proxy is required to connect Qualys Cloud
             #- name: qualys_https_proxy
             #  value: <proxy FQDN or Ip address>:<port#>
@@ -93,6 +119,9 @@ items:
 # uncomment(and indent properly) below section if proxy(with CA cert) required to connect Qualys Cloud
             #- mountPath: /etc/qualys/qpa/cert/custom-ca.crt
             #  name: proxy-cert-path              
+# uncomment(and indent properly) below section if using Docker HTTP socket with TLS
+            #- mountPath: /root/.docker
+            #  name: tls-cert-path
             securityContext:
               allowPrivilegeEscalation: false
           volumes:
@@ -112,5 +141,10 @@ items:
             #- name: proxy-cert-path
             #  hostPath:
             #    path: <proxy certificate path>
-            #    type: File                
+            #    type: File
+# uncomment(and indent properly) below section if using Docker HTTP socket with TLS
+            #- name: tls-cert-path
+            #  hostPath:
+            #    path: <Path of directory of client certificates>
+            #    type: Directory
           hostNetwork: true
