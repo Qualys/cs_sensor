@@ -91,7 +91,7 @@ items:
         spec:
           #tolerations:
           # this toleration is to have the daemonset runnable on master nodes
-          # remove it if want your masters to run sensor pod
+          # Uncomment it if want your masters to run sensor pod
           #- key: node-role.kubernetes.io/master
           #  effect: NoSchedule
           serviceAccountName: qualys-service-account 
