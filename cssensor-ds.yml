@@ -18,8 +18,8 @@ items:
       name: qualys-reader-role
       namespace: qualys
     rules:
-    - apiGroups: [""]
-      resources: ["pods"]
+    - apiGroups: ["","batch"]
+      resources: ["pods","jobs"]
       verbs: ["get", "list", "watch","create", "delete", "deletecollection"]
     - apiGroups: [""]
       resources: ["pods/status"]
@@ -33,7 +33,13 @@ items:
       name: qualys-cluster-reader-role
     rules:
     - apiGroups: [""]
-      resources: ["nodes"]
+      resources: ["nodes", "pods/status", "replicationcontrollers/status", "nodes/status"]
+      verbs: ["get"]
+    - apiGroups: ["apps"]
+      resources: ["replicasets/status", "daemonsets/status", "deployments/status", "statefulsets/status"]
+      verbs: ["get"]
+    - apiGroups: ["batch"]
+      resources: ["jobs/status", "cronjobs/status"]
       verbs: ["get"]
   # RoleBinding to assign permissions in qualys-reader-role to qualys-service-account 
   - kind: RoleBinding
@@ -82,7 +88,7 @@ items:
         spec:
           #tolerations:
           # this toleration is to have the daemonset runnable on master nodes
-          # Uncomment it if want your masters to run sensor pod
+          # uncomment it if want your masters to run sensor pod
           #- key: node-role.kubernetes.io/master
           #  effect: NoSchedule
           serviceAccountName: qualys-service-account 

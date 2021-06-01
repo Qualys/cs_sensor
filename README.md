@@ -8,7 +8,7 @@
 * Mesosphere DC/OS
 * OpenShift
 
-## Usage ::
+## Usage
 
 Please provide appropriate values for image, ACTIVATIONID, CUSTOMERID, POD_URL, and Proxy (if applicable).
 
