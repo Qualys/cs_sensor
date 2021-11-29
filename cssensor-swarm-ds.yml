@@ -10,15 +10,15 @@ services:
           cpus: '0.20' # Default CPU usage limit on each node for sensor.
     command: ["--swrm-mode"]
     environment:
-      ACTIVATIONID: XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
-      CUSTOMERID: XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
+      ACTIVATIONID: __activationId
+      CUSTOMERID: __customerId
       POD_URL: 
 # uncomment(and indent properly) below section if proxy is required to connect Qualys Cloud
       #qualys_https_proxy: <proxy FQDN or Ip address>:<port#>
     volumes:
       - type: bind
-        source: /var/run/
-        target: /var/run/
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
       - type: volume
         source: persistent-volume
         target: /usr/local/qualys/qpa/data/

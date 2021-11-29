@@ -88,7 +88,7 @@ items:
         spec:
           #tolerations:
           # this toleration is to have the daemonset runnable on master nodes
-          # uncomment it if want your masters to run sensor pod
+          # remove it if want your masters to run sensor pod
           #- key: node-role.kubernetes.io/master
           #  effect: NoSchedule
           serviceAccountName: qualys-service-account 
@@ -102,9 +102,9 @@ items:
             args: ["--k8s-mode"]
             env:
             - name: CUSTOMERID
-              value: XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX 
+              value: __customerId
             - name: ACTIVATIONID
-              value: XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
+              value: __activationId
             - name: POD_URL
               value: 
             - name: QUALYS_SCANNING_CONTAINER_LAUNCH_TIMEOUT
@@ -115,9 +115,18 @@ items:
 # uncomment(and indent properly) below section if proxy is required to connect Qualys Cloud
             #- name: qualys_https_proxy
             #  value: <proxy FQDN or Ip address>:<port#>
+            - name: QUALYS_POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: QUALYS_POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
             volumeMounts:
-            - mountPath: /var/run
+            - mountPath: /var/run/docker.sock
               name: socket-volume
+              readOnly: true
             - mountPath: /usr/local/qualys/qpa/data
               name: persistent-volume
             - mountPath: /usr/local/qualys/qpa/data/conf/agent-data
@@ -133,8 +142,8 @@ items:
           volumes:
             - name: socket-volume
               hostPath:
-                path: /var/run
-                type: Directory
+                path: /var/run/docker.sock
+                type: Socket
             - name: persistent-volume
               hostPath:
                 path: /usr/local/qualys/sensor/data

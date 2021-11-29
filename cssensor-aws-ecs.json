@@ -13,11 +13,11 @@
             "environment": [
             {
                 "name": "ACTIVATIONID",
-                "value": "XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX"
+                "value": "__activationId"
             },
             {
                 "name": "CUSTOMERID",
-                "value": "XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX"
+                "value": "__customerId"
             },
             {
                 "name": "POD_URL",
@@ -35,7 +35,7 @@
                 },
                 {
                     "sourceVolume": "var_run",
-                    "containerPath": "/var/run"
+                    "containerPath": "/var/run/docker.sock"
                 },
                 {
                     "sourceVolume": "etc_qualys",
@@ -58,7 +58,7 @@
         {
             "name": "var_run",
             "host": {
-                "sourcePath": "/var/run"
+                "sourcePath": "/var/run/docker.sock"
             }
         },
         {

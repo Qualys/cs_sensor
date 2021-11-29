@@ -40,7 +40,7 @@ spec:
     spec:
       #tolerations:
       # this toleration is to have the daemonset runnable on master nodes
-      # Uncomment it if want your masters to run sensor pod
+      # remove it if want your masters to run sensor pod
       #- key: node-role.kubernetes.io/master
       #  effect: NoSchedule
       serviceAccountName:
@@ -56,37 +56,54 @@ spec:
         args: ["--k8s-mode"]
         env:
         - name: ACTIVATIONID
-          value: XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
+          value: __activationId
         - name: CUSTOMERID
-          value: XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
+          value: __customerId
         - name: POD_URL
           value: 
 # uncomment(and indent properly) below section if proxy is required to connect Qualys Cloud
         #- name: qualys_https_proxy
         #  value: <proxy FQDN or Ip address>:<port#>
+        - name: QUALYS_POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: QUALYS_POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
         volumeMounts:
-        - mountPath: /var/run
+        - mountPath: /var/run/docker.sock
           name: socket-volume
+          readOnly: true
         - mountPath: /usr/local/qualys/qpa/data
           name: persistent-volume
         - mountPath: /usr/local/qualys/qpa/data/conf/agent-data
           name: agent-volume
 # uncomment(and indent properly) below section if proxy(with CA cert) required to connect Qualys Cloud
         #- mountPath: /etc/qualys/qpa/cert/custom-ca.crt
-        #  name: proxy-cert-path
+        #  name: proxy-cert-path              
+# uncomment(and indent properly) below section if using Docker HTTP socket with TLS
+        #- mountPath: /root/.docker
+        #  name: tls-cert-path
+        securityContext:
+          privileged: true
       volumes:
-      - name: socket-volume
-        hostPath:
-          path: /var/run/
-      - name: persistent-volume
-        hostPath:
-          path: /usr/local/qualys/sensor/data/
-      - name: agent-volume
-        hostPath:
-          path: /etc/qualys/
+        - name: socket-volume
+          hostPath:
+            path: /var/run/docker.sock
+            type: Socket
+        - name: persistent-volume
+          hostPath:
+            path: /usr/local/qualys/sensor/data
+            type: DirectoryOrCreate
+        - name: agent-volume
+          hostPath:
+            path: /etc/qualys
+            type: DirectoryOrCreate
 # uncomment(and indent properly) below section if proxy(with CA cert) required to connect Qualys Cloud
-      #- name: proxy-cert-path
-      #  hostPath:
-      #    path: <proxy certificate path>
+        #- name: proxy-cert-path
+        #  hostPath:
+        #    path: <proxy certificate path>
       hostNetwork: true
       hostPID: true

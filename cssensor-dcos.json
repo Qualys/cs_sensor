@@ -24,8 +24,8 @@
         "mode": "RW"
       },
       {
-        "containerPath": "/var/run",
-        "hostPath": "/var/run",
+        "containerPath": "/var/run/docker.sock",
+        "hostPath": "/var/run/docker.sock",
         "mode": "RW"
       },
       {
@@ -41,8 +41,8 @@
     ]
   },
   "env": {
-    "ACTIVATIONID": "XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX",
-    "CUSTOMERID": "XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX",
+    "ACTIVATIONID": "__activationId",
+    "CUSTOMERID": "__customerId",
     "POD_URL": "",
     "qualys_https_proxy": "<proxy FQDN or Ip address>:<port#>"
   },
