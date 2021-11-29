@@ -7,7 +7,7 @@ services:
       mode: global  # Deploy 1 container on each node == DaemonSet
       resources:
         limits:
-          cpus: '0.20' # Default CPU usage limit on each node for sensor
+          cpus: '0.20' # Default CPU usage limit on each node for sensor.
     command: ["--swrm-mode"]
     environment:
       ACTIVATIONID: __activationId
