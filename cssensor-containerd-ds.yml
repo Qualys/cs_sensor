@@ -153,7 +153,7 @@ items:
               hostPath:
                 path: /etc/qualys
                 type: DirectoryOrCreate
-# uncomment(and indent properly) below section if proxy(with CA cert) required to connect Qualys Cloud
+# uncomment(and indent properly) below section if proxy(with CA cert) required to connect Qualys Cloud.
             #- name: proxy-cert-path
             #  hostPath:
             #    path: <proxy certificate path>
