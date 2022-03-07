@@ -1,0 +1,39 @@
+# Default values for sensor-chart.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+qualys:
+  namespace: "qualys"
+  customerID: "CUSTOMERID"
+  activationID: "ACTIVATIONID"
+  #<POD_URL_from_sensor_deployment_guide_page_13_include_https://>
+  pod_url: ""
+  containerlaunchtimeout: "10"
+  image: "qualys/qcs-sensor:latest"  #Qualys sensor image location
+  imagePullPolicy: "IfNotPresent"  
+  # args for configuring the sensor - see documentaiton on sensor deployment
+  args: "[\"--k8s-mode\", \"--container-runtime\", \"cri-o\"]"
+  cpu: "0.2"
+  # if k8s version is 1.17 and earlier then change apiVersion to "rbac.authorization.k8s.io/v1beta1"
+  apiVersion: "rbac.authorization.k8s.io/v1" 
+  # this toleration is to have the daemonset runnable on master nodes
+  # set it to true it if want your masters to run sensor pod
+  toleration: false
+  tolerationeffect : NoSchedule
+  # if proxy is required to connect Qualys Cloud, set the below value to true
+  httpsproxy: false
+  httpsproxyvalue: "<proxy FQDN or Ip address>:<port#>"
+  # if proxy(with CA cert) required to connect Qualys Cloud
+  proxycert: false
+  proxycertpath: "<proxy certificate path>"
+  # Peristent volume host path
+  withpersistentvol: true
+  persistentvolhostpath: "/usr/local/qualys/sensor/data"
+  # Parameters to set sensor container memory limit. Please change values of parameters
+  sensorContLimitMem: false
+  sensorContLimitMemValue: "500Mi"
+  sensorContRequestMemValue: "300Mi"
+  # Parameters to set scanning container memory limit. Please change values of parameters
+  scanningContMem: false
+  scanningContLimitMemValue: "800Mi"
+  scanningContReqMemValue: "300Mi"

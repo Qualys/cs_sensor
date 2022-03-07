@@ -1,0 +1,6 @@
+apiVersion: v2
+appVersion: 1.11.0
+description: A Helm chart for OpenShift with docker as container runtime
+name: sensor-chart
+type: application
+version: 1.0.0
