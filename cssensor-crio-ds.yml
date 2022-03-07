@@ -14,7 +14,8 @@ items:
       namespace: qualys
   # Role for all permission to qualys namespace
   - kind: Role
-    apiVersion: rbac.authorization.k8s.io/v1beta1
+    # if k8s version is 1.17 and earlier then change apiVersion to "rbac.authorization.k8s.io/v1beta1"
+    apiVersion: rbac.authorization.k8s.io/v1
     metadata:
       name: qualys-reader-role
       namespace: qualys
@@ -30,7 +31,8 @@ items:
       verbs: ["create"]
   # ClusterRole for read permission to whole cluster
   - kind: ClusterRole
-    apiVersion: rbac.authorization.k8s.io/v1beta1
+    # if k8s version is 1.17 and earlier then change apiVersion to "rbac.authorization.k8s.io/v1beta1"
+    apiVersion: rbac.authorization.k8s.io/v1
     metadata:
       name: qualys-cluster-reader-role
     rules:
@@ -51,7 +53,8 @@ items:
       verbs: ["get"]
   # RoleBinding to assign permissions in qualys-reader-role to qualys-service-account 
   - kind: RoleBinding
-    apiVersion: rbac.authorization.k8s.io/v1beta1
+    # if k8s version is 1.17 and earlier then change apiVersion to "rbac.authorization.k8s.io/v1beta1"
+    apiVersion: rbac.authorization.k8s.io/v1
     metadata:
       name: qualys-reader-rb
       namespace: qualys
@@ -65,7 +68,8 @@ items:
       apiGroup: rbac.authorization.k8s.io
   # ClusterRoleBinding to assign permissions in qualys-cluster-reader-role to qualys-service-account 
   - kind: ClusterRoleBinding
-    apiVersion: rbac.authorization.k8s.io/v1beta1
+    # if k8s version is 1.17 and earlier then change apiVersion to "rbac.authorization.k8s.io/v1beta1"
+    apiVersion: rbac.authorization.k8s.io/v1
     metadata:
       name: qualys-cluster-reader-rb
     subjects:
