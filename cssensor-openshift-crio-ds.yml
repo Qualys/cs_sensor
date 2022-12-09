@@ -142,6 +142,9 @@ items:
 # uncomment(and indent properly) below section if proxy is required to connect Qualys Cloud
             #- name: qualys_https_proxy
             #  value: <proxy FQDN or Ip address>:<port#>
+# uncomment(and indent properly) below section for a registry sensor version 1.21.0 or later used for a public registry, the proxy value needs to be set with the name https_proxy
+            #- name: https_proxy
+            #  value: <proxy FQDN or Ip address>:<port#>
             - name: QUALYS_POD_NAME
               valueFrom:
                 fieldRef:

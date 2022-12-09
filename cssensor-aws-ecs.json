@@ -26,6 +26,10 @@
             {
                 "name": "qualys_https_proxy",
                 "value": "<proxy FQDN or Ip address>:<port#>"
+            },
+            {
+                "name": "https_proxy",
+                "value": "<proxy FQDN or Ip address>:<port#>"
             }
             ],
             "mountPoints": [

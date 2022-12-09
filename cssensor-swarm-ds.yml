@@ -15,6 +15,8 @@ services:
       POD_URL: 
 # uncomment(and indent properly) below section if proxy is required to connect Qualys Cloud
       #qualys_https_proxy: <proxy FQDN or Ip address>:<port#>
+# uncomment(and indent properly) below section for a registry sensor version 1.21.0 or later used for a public registry, the proxy value needs to be set with the name https_proxy
+      #https_proxy: <proxy FQDN or Ip address>:<port#>
     volumes:
       - type: bind
         source: /var/run/docker.sock

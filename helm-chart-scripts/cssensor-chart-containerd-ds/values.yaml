@@ -23,6 +23,9 @@ qualys:
   # if proxy is required to connect Qualys Cloud, set the below value to true
   httpsproxy: false
   httpsproxyvalue: "<proxy FQDN or Ip address>:<port#>"
+  # if proxy required for registry sensor version 1.21.0 or later used for a public registry, set the below value to true
+  registryhttpsproxy: false
+  registryhttpsproxyvalue: "<proxy FQDN or Ip address>:<port#>"
   # if proxy(with CA cert) required to connect Qualys Cloud
   proxycert: false
   proxycertpath: "<proxy certificate path>"
