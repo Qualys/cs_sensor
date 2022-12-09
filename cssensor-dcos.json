@@ -44,7 +44,8 @@
     "ACTIVATIONID": "__activationId",
     "CUSTOMERID": "__customerId",
     "POD_URL": "",
-    "qualys_https_proxy": "<proxy FQDN or Ip address>:<port#>"
+    "qualys_https_proxy": "<proxy FQDN or Ip address>:<port#>",
+    "https_proxy": "<proxy FQDN or Ip address>:<port#>"
   },
   "portDefinitions": [
     {
