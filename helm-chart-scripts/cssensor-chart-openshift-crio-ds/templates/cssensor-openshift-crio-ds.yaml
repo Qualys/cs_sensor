@@ -85,7 +85,7 @@ items:
     allowHostIPC: false
     allowHostPID: false
     allowHostPorts: false
-    allowPrivilegedContainer: false
+    allowPrivilegedContainer: true
     readOnlyRootFilesystem: false
     runAsUser:
       type: RunAsAny
