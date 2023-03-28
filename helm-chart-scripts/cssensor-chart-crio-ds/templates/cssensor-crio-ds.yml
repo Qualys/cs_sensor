@@ -159,8 +159,10 @@ items:
             - mountPath: /etc/qualys/qpa/cert/custom-ca.crt
               name: proxy-cert-path
 {{- end }}
+            - mountPath: /var/lib/containers/storage
+              name: container-storage
             securityContext:
-              allowPrivilegeEscalation: false
+              privileged: true
           volumes:
             - name: socket-volume
               hostPath:
@@ -183,4 +185,7 @@ items:
                 path: {{.Values.qualys.proxycertpath}}
                 type: File
 {{- end }}
+            - name: container-storage
+              hostPath:
+                path: /var/lib/containers/storage
           hostNetwork: true

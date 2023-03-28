@@ -89,7 +89,7 @@ items:
     allowHostIPC: false
     allowHostPID: false
     allowHostPorts: false
-    allowPrivilegedContainer: false
+    allowPrivilegedContainer: true
     readOnlyRootFilesystem: false
     runAsUser:
       type: RunAsAny
@@ -158,11 +158,13 @@ items:
               name: persistent-volume
             - mountPath: /usr/local/qualys/qpa/data/conf/agent-data
               name: agent-volume
+            - mountPath: /var/lib/containers/storage
+              name: container-storage
 # uncomment(and indent properly) below section if proxy(with CA cert) required to connect Qualys Cloud
             #- mountPath: /etc/qualys/qpa/cert/custom-ca.crt
             #  name: proxy-cert-path              
             securityContext:
-              allowPrivilegeEscalation: false
+              privileged: true
           volumes:
             - name: socket-volume
               hostPath:
@@ -176,6 +178,9 @@ items:
               hostPath:
                 path: /etc/qualys
                 type: DirectoryOrCreate
+            - name: container-storage
+              hostPath:
+                path: /var/lib/containers/storage
 # uncomment(and indent properly) below section if proxy(with CA cert) required to connect Qualys Cloud
             #- name: proxy-cert-path
             #  hostPath:
