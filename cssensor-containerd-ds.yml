@@ -153,6 +153,10 @@ items:
               hostPath:
                 path: /etc/qualys
                 type: DirectoryOrCreate
+          tolerations:
+          - key: node-role.kubernetes.io/control-plane
+            operator: "Exists"
+            effect: "NoSchedule"
 # uncomment(and indent properly) below section if proxy(with CA cert) required to connect Qualys Cloud
             #- name: proxy-cert-path
             #  hostPath:
